@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>父组件向子组件传递数据</title>
+</head>
+
+<body>
+  <div id="fathercomponent">
+	    <ul>
+		<!-- 	父组件可以访问它自己的数据 -->
+			<li v-for="item in fatherdatas">{{item}}</li>
+		</ul>
+         <!-- 我们将父组件中的fatherdatas数据传给了子组件的dataarr -->
+         <child-component :dataarr="fatherdatas" @father="getfatherdatas"></child-component>
+  </div>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+  <script>
+       Vue.component('child-component',{
+		   /* 子组件不能访问父组件 */
+		   /* 给props添加一个属性,这个属性名字是之前在组件的标签中加的 */
+		   props:['dataarr'],
+		   template:
+		    ` <ul>
+			     <li v-for = "item in dataarr">{{item}}</li>
+				 </ul>`,
+		   created:function(){
+			 /*  子组件中的dataarr添加一个数组元素 */
+			   this.dataarr.push(6,7,8);
+			/*   触发组件的father事件 */
+			   this.$emit('father');
+		   	
+		   }
+			  
+	   })
+       vm = new Vue({
+		   data:{
+			     fatherdatas: [1,2,3,4,5,6,7,8]
+		   },
+		   methods:{
+			   getfatherdatas(){
+				   console.log(this.fatherdatas.join(','));
+			   }
+		   }
+	   }).$mount('#fathercomponent');
+	   
+	  /* 上面的代码 vm 实例挂载了id为fathercomponent的DIV中,相当于fathercomponent为一个组件了,
+	   新定义的组件child-component
+	   我们再vm中定义的数据fatherdatas,是父组件fathercomponent的数据.可以在父组件中直接引用.
+	   子组件内部是无法访问到fatherdatas数据的.如果要访问fatherdatas需要通过props属性来实现. */
+  </script>
+</body>
+
+</html>
